@@ -1,0 +1,26 @@
+pipeline {
+    agent any
+
+    stages {
+       
+        stage('checkout') {
+            steps {
+                git 'https://github.com/Shubam99/jenkins-web.git'
+            }
+        }
+        stage('build') {
+            steps {
+                tool name: 'maven', type: 'maven'
+                bat 'mvn package'
+            }
+        }
+        stage('deploy') {
+            steps {
+               deploy adapters: [tomcat8(credentialsId: '03d86a60-b632-41d6-b330-0b551111918b',
+               path: '', url: 'http://localhost:8080/')],
+               contextPath: 'servlet-jsp-maven-jenkins',
+               war: '**/*.war'
+            }
+        }
+    }
+}
